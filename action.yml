@@ -1,0 +1,27 @@
+name: Publish VPAT
+description: Publish a VPAT to a target repository
+author: Deque Systems, Inc.
+
+inputs:
+  target-repo-base-branch:
+    description: The base branch of the target repository
+    default: main
+  target-repo-github-token:
+    description: GitHub token to access the target repository
+    required: true
+  target-repo:
+    description: The target GitHub repository
+    required: true
+  target-repo-vpat-directory:
+    description: Directory where the VPAT should be published in the target repository
+    default: static/vpats
+  product-id:
+    description: Brief token that identifies your product - should match product id in docs site
+    required: true
+  vpat-content:
+    description: The VPAT content as a string of HTML without escape characters
+    required: true
+
+runs:
+  using: "node16"
+  main: "dist/index.js"
