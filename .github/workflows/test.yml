@@ -1,0 +1,19 @@
+name: Test
+
+on: push
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./
+        with:
+          # For testing purposes, publish to this repository intead of the docs-site repository
+          docs-site-base-branch: main
+          docs-site-github-token: ${{ secrets.GITHUB_TOKEN }}
+          docs-site-repository: dequelabs/action-vpat-publish
+          docs-site-vpat-directory: vpats
+          product-id: test
+          vpat-content: $(cat ./test/vpat.html)
