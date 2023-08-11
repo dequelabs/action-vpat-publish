@@ -1,0 +1,43 @@
+name: Test
+
+on: push
+
+jobs:
+  get_test_vpat:
+    runs-on: ubuntu-latest
+    outputs:
+      content: ${{ steps.get_vpat_content.outputs.content }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - id: get_vpat_content
+        run: echo "::set-output name=content::$(cat ./test/vpat.html)"
+
+  main:
+    runs-on: ubuntu-latest
+    needs: get_test_vpat
+    env:
+      # For testing purposes, publish to this repository
+      TARGET_REPO_NAME: dequelabs/action-vpat-publish
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Test publish action
+        uses: ./
+        with:
+          target-repo: ${{ env.TARGET_REPO_NAME }}
+          target-repo-github-token: ${{ secrets.GITHUB_TOKEN }}
+          target-repo-base-branch: main
+          target-repo-vpat-directory: vpats
+          product-id: test
+          vpat-content: ${{ needs.get_test_vpat.outputs.content }}
+
+      - name: Test publish action again to simulate updating an existing PR
+        uses: ./
+        with:
+          target-repo: ${{ env.TARGET_REPO_NAME }}
+          target-repo-github-token: ${{ secrets.GITHUB_TOKEN }}
+          target-repo-base-branch: main
+          target-repo-vpat-directory: vpats
+          product-id: test
+          vpat-content: ${{ needs.get_test_vpat.outputs.content }}
